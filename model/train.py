@@ -36,6 +36,9 @@ def predict(text, classifier, k=3):
         result.append([id,name, round(probs[i] * 100, 2)])
     return result
 
+def load_model(model_path):
+    return fasttext.load_model(model_path)
+
 if __name__ == '__main__':
     import argparse 
 

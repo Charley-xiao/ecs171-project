@@ -26,21 +26,29 @@
         form {
             margin-top: 20px;
         }
-        input, button {
+        textarea, button {
             padding: 10px;
             margin: 5px 0;
         }
     </style>
+    <script>
+        function submit() {
+            const ele = document.getElementById("analyze");
+            ele.disabled = true;
+            ele.innerText = "Analyzing...";
+            document.querySelector("form").submit();
+        }
+    </script>
 </head>
 <body>
     <div id="container">
-        <h1>Submit Form</h1>
+        <h1>So I write like...?</h1>
         {% if message %}
             <p>{{ message }}</p>
         {% end %}
         <form action="/submit" method="post">
-            <input type="text" name="data" placeholder="Enter something">
-            <button type="submit">Submit</button>
+            <textarea name="data" id="text" cols="30" rows="10" placeholder="Enter your text here..."></textarea>
+            <button type="submit" id="analyze" onclick="submit()">Analyze</button>
         </form>
     </div>
 </body>
