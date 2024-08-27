@@ -39,7 +39,7 @@ class CustomTokenizer:
         self.tokenizer_id = 0
     
     def split_rule(self, text: str) -> List[str]:
-        sentences = re.split('(\!|\.|\?)', text)
+        sentences = re.split(r'(\!|\.|\?)', text)
         new_sents = []
         for i in range(int(len(sentences)/2)):
             sent = sentences[2*i] + sentences[2*i+1]
@@ -119,7 +119,7 @@ class LimeExplainer(BaseExplainer):
         self.explainer = LimeTextExplainer(split_expression=self.split_rule, class_names=list(self.ind2label.values()))
 
     def split_rule(self, text):
-        sentences = re.split('(。|！|\!|\.|？|\?)',text)
+        sentences = re.split(r'(。|\!|\.|\?)',text)
         new_sents = []
         for i in range(int(len(sentences)/2)):
             sent = sentences[2*i] + sentences[2*i+1]

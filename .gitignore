@@ -1,4 +1,6 @@
 
 *.pyc
 
-.vercel
+data/Gutenberg/*
+data/train.txt
+data/dataset.zip
