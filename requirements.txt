@@ -1,6 +1,5 @@
 fasttext
 shap
 lime
-pandas
 numpy
 tornado
