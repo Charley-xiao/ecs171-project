@@ -15,19 +15,19 @@ def fit(training_set_path, type='basic', validation_set_path=None):
         return fasttext.train_supervised(
             input=training_set_path, 
             autotuneValidationFile=validation_set_path, 
-            autotuneModelSize='3600M', 
-            autotuneDuration=3600
+            # autotuneModelSize='3600M', 
+            # autotuneDuration=3600
         )
     else:
         raise ValueError(f'Invalid type: {type}. Use "basic" or "autotune".')
 
-def predict(text, classifier, k=3):
+def predict(text, classifier, path2label2ind, k=3):
     """
     Returns:
         list: [[id, author name, percentage], ...]
     """
     labels, probs = classifier.predict(text, k=k)
-    label2ind = json.load(open(args.label2ind, 'r', encoding='ISO-8859-1'))
+    label2ind = json.load(open(path2label2ind, 'r', encoding='ISO-8859-1'))
     result = []
     for i in range(k):
         id = labels[i][9:]
@@ -59,12 +59,3 @@ if __name__ == '__main__':
     print('R@1:', result[2])
     print('Number of examples:', result[0])
     classifier.save_model(args.model)
-
-# Read 22M words
-# Number of words:  198112
-# Number of labels: 10
-# Progress: 100.0% words/sec/thread:  376646 lr:  0.000000 avg.loss:  0.500285 ETA:   0h 0m 0s
-# Model results: 
-# P@1: 0.7903173371410526
-# R@1: 0.7903173371410526
-# Number of examples: 1184261
