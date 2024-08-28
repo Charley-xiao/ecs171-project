@@ -42,6 +42,7 @@ def clean_text(text):
     6. Remove multiple spaces, ensure that there is only one space between tokens
     7. Strip leading and trailing spaces
     8. Three dots (. . .) should be treated as a single token
+    9. Extract a list of sentences, ending with punctuation
 
     For example:
     "Hello, world!" -> "hello , world !"
@@ -54,26 +55,24 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text)
     text = text.strip()
     text = re.sub(r'\. \. \.', '...', text)
-    return text
-
-def test_clean_text():
-    assert clean_text("Hello, world!") == "hello , world !", clean_text("Hello, world!")
-    assert clean_text("Hello\nworld!") == "hello world !", clean_text("Hello\nworld!")
-    assert clean_text("    Hello \n World? %In a galaxy far\n, far away...") == "hello world ? in a galaxy far , far away ...", clean_text("    Hello \n World? %In a galaxy far\n, far away...")
-    print("All tests passed.")
+    sentences = []
+    for sentence in re.split(r'(?<=[.?!])', text):
+        sentence = sentence.strip()
+        if sentence and len(sentence) > 3:
+            sentences.append(sentence)
+    return sentences
 
 def statistics(primitive_dict):
     print(f'Number of authors: {len(primitive_dict)}')
     print(f'Number of books: {sum(len(primitive_dict[author]) for author in primitive_dict)}')
 
 statistics(primitive_dict)
-# Number of authors: 142
-# Number of books: 3036
-test_clean_text()
 
 with open(OUTPUT_DATASET_PATH, 'w', encoding='utf-8') as f:
     for author in primitive_dict:
         for book in primitive_dict[author]:
-            f.write(f'{label2ind[author]} {clean_text(book["text"])}\n')
+            sentences = clean_text(book['text'])
+            for sentence in sentences:
+                f.write(f'{label2ind[author]} {sentence}\n')
 
 print(f'Dataset written to {OUTPUT_DATASET_PATH}.')

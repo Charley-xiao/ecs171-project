@@ -2,5 +2,7 @@
 *.pyc
 
 data/Gutenberg/*
-data/train.txt
+data/*.txt
 data/dataset.zip
+
+model/*.model

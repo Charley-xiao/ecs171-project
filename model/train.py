@@ -15,8 +15,8 @@ def fit(training_set_path, type='basic', validation_set_path=None):
         return fasttext.train_supervised(
             input=training_set_path, 
             autotuneValidationFile=validation_set_path, 
-            autotuneModelSize='12M', 
-            autotuneDuration=600, 
+            autotuneModelSize='3600M', 
+            autotuneDuration=3600, 
             autotuneMetric='f1'
         )
     else:
@@ -59,3 +59,12 @@ if __name__ == '__main__':
     print('R@1:', result[2])
     print('Number of examples:', result[0])
     classifier.save_model(args.model)
+
+# Read 242M words
+# Number of words:  1009665
+# Number of labels: 142
+# Progress: 100.0% words/sec/thread:  394318 lr:  0.000000 avg.loss:  4.007396 ETA:   0h 0m 0s
+# Model results: 
+# P@1: 0.1808300395256917
+# R@1: 0.1808300395256917
+# Number of examples: 3036
