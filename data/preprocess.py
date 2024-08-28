@@ -1,9 +1,17 @@
 import json 
 import os
 import re
+import argparse 
+import random 
+
+argparser = argparse.ArgumentParser()
+argparser.add_argument('--num_authors', type=int, default=-1, help='Number of authors to include in the dataset.')
+args = argparser.parse_args()
 
 DATA_PATH = 'Gutenberg/txt' # Agatha Christie___The Mysterious Affair at Styles.txt
 OUTPUT_DATASET_PATH = 'train.txt'
+if args.num_authors != -1:
+    OUTPUT_DATASET_PATH = f'train_{args.num_authors}.txt'
 
 # Generate a primitive dict that looks like:
 # {
@@ -28,8 +36,14 @@ for filename in os.listdir(DATA_PATH):
         author_cnt += 1
     primitive_dict[author].append({'title': title, 'text': text})
 
-with open('label2ind.json', 'w', encoding='ISO-8859-1') as f:
-    json.dump(label2ind, f)
+if args.num_authors == -1:
+    with open('label2ind.json', 'w', encoding='ISO-8859-1') as f:
+        json.dump(label2ind, f)
+else:
+    selected_authors = random.sample(list(primitive_dict.keys()), args.num_authors)
+    primitive_dict = {author: primitive_dict[author] for author in selected_authors}
+    with open(f'label2ind_{args.num_authors}.json', 'w', encoding='ISO-8859-1') as f:
+        json.dump(label2ind, f)
 
 def clean_text(text):
     """
