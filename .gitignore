@@ -3,6 +3,6 @@
 
 data/Gutenberg/*
 data/*.txt
-data/dataset.zip
+data/*.zip
 
 model/*.model
