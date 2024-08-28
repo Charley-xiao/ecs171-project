@@ -15,7 +15,18 @@ Please put these two files in the `data` folder.
 
 Upon evaluation, we found that the full dataset is too large for the current implementation, which also makes it difficult to train the model. Therefore, we decided to use a subset of the full dataset for the current implementation.
 
-Partial dataset is available at [this link](), which contains a total of manually selected 10 authors. **(Temporarily unavailable)**
+Partial dataset is available at [this link](https://drive.google.com/file/d/1RKZTOsffCXKvn8_qzABmw468L4ZbmcGp/view?usp=sharing), which contains a total of manually selected 10 authors, including:
+
+- Charles Dickens,
+- Agatha Christie,
+- Jane Austen,
+- Mark Twain,
+- O Henry,
+- Oscar Wilde,
+- P G Wodehouse,
+- Walt Whitman,
+- Winston Churchill, and 
+- Zane Grey.
 
 ### Generate Dataset from Scratch
 
@@ -30,6 +41,12 @@ python preprocess.py --num_authors <number of authors you want>
 ```
 
 This will generate the dataset with the specified number of authors **randomly**. The generated dataset will be saved in the `data` folder.
+
+If you wish to generate the dataset with specific authors, please modify the `manually_selected_authors` variable in the `preprocess.py` file, and run:
+
+```bash
+python preprocess.py --enable_author_selection
+```
 
 If you wish to split the dataset into training and testing sets, you can run the following command
 
@@ -46,7 +63,7 @@ after you properly modify the variable `ORIGINAL_DATASET_PATH` in the `splitdata
 To train the model, you can run the following command under the `model` folder:
 
 ```bash
-python train.py --train <path to the training data> --type <basic or autotune> --test <path to the testing data> --val <path to the validation data> --model <path to save the model>
+python train.py --train <path to the training data> --type <basic or autotune> --test <path to the testing data> --val <path to the validation data> --model <path to save the model> --label2ind <path to the label2ind file>
 ```
 
 ## User Interface

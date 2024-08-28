@@ -6,11 +6,14 @@ import random
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument('--num_authors', type=int, default=-1, help='Number of authors to include in the dataset.')
+argparser.add_argument('--enable_author_selection', action='store_true', help='Enable author selection.')
 args = argparser.parse_args()
 
 DATA_PATH = 'Gutenberg/txt' # Agatha Christie___The Mysterious Affair at Styles.txt
 OUTPUT_DATASET_PATH = 'train.txt'
-if args.num_authors != -1:
+if args.enable_author_selection:
+    OUTPUT_DATASET_PATH = 'train_author_selection.txt'
+elif args.num_authors != -1:
     OUTPUT_DATASET_PATH = f'train_{args.num_authors}.txt'
 
 # Generate a primitive dict that looks like:
@@ -22,10 +25,27 @@ if args.num_authors != -1:
 primitive_dict = {}
 label2ind = {}
 author_cnt = 0
+manually_selected_authors = [
+    'Charles Dickens',
+    'Agatha Christie',
+    'Jane Austen',
+    'Mark Twain',
+    'O Henry',
+    'Oscar Wilde',
+    'P G Wodehouse',
+    'Walt Whitman',
+    'Winston Churchill',
+    'Zane Grey'
+]
+# Number of authors: 10
+# Number of books: 239
 
 for filename in os.listdir(DATA_PATH):
     print(f'Processing {filename}...')
     author, title_with_suffix = filename.split('___')
+    if args.enable_author_selection and author not in manually_selected_authors:
+        print(f'Skipping {filename}...')
+        continue
     title = title_with_suffix[:-4]
     print(f'Author: {author}, Title: {title}')
     with open(os.path.join(DATA_PATH, filename), 'r', encoding='ISO-8859-1') as f:
@@ -36,7 +56,10 @@ for filename in os.listdir(DATA_PATH):
         author_cnt += 1
     primitive_dict[author].append({'title': title, 'text': text})
 
-if args.num_authors == -1:
+if args.enable_author_selection:
+    with open('label2ind_author_selection.json', 'w', encoding='ISO-8859-1') as f:
+        json.dump(label2ind, f)
+elif args.num_authors == -1:
     with open('label2ind.json', 'w', encoding='ISO-8859-1') as f:
         json.dump(label2ind, f)
 else:

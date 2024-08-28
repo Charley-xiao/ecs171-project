@@ -16,8 +16,7 @@ def fit(training_set_path, type='basic', validation_set_path=None):
             input=training_set_path, 
             autotuneValidationFile=validation_set_path, 
             autotuneModelSize='3600M', 
-            autotuneDuration=3600, 
-            autotuneMetric='f1'
+            autotuneDuration=3600
         )
     else:
         raise ValueError(f'Invalid type: {type}. Use "basic" or "autotune".')
@@ -28,7 +27,7 @@ def predict(text, classifier, k=3):
         list: [[id, author name, percentage], ...]
     """
     labels, probs = classifier.predict(text, k=k)
-    label2ind = json.load(open('../data/label2ind.json', 'r', encoding='utf-8'))
+    label2ind = json.load(open(args.label2ind, 'r', encoding='ISO-8859-1'))
     result = []
     for i in range(k):
         id = labels[i][9:]
@@ -44,6 +43,7 @@ if __name__ == '__main__':
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument('--train', type=str, default='../data/train.txt', help='Path to the training set.')
+    argparser.add_argument('--label2ind', type=str, default='../data/label2ind.json', help='Path to the label2ind file.')
     argparser.add_argument('--type', type=str, choices=['basic', 'autotune'], default='basic', help='Type of training. Default: basic')
     argparser.add_argument('--val', type=str, default=None, help='Path to the validation set. Required for autotune.')
     argparser.add_argument('--test', type=str, default=None, help='Path to the test set. Default: training set.')
@@ -60,9 +60,11 @@ if __name__ == '__main__':
     print('Number of examples:', result[0])
     classifier.save_model(args.model)
 
-# Number of labels: 142
-# Progress: 100.0% words/sec/thread:   80285 lr:  0.000000 avg.loss:  0.896437 ETA:   0h 0m 0s
-# Model results:
-# P@1: 0.2693905094044031
-# R@1: 0.2693905094044031
-# Number of examples: 11970882
+# Read 22M words
+# Number of words:  198112
+# Number of labels: 10
+# Progress: 100.0% words/sec/thread:  376646 lr:  0.000000 avg.loss:  0.500285 ETA:   0h 0m 0s
+# Model results: 
+# P@1: 0.7903173371410526
+# R@1: 0.7903173371410526
+# Number of examples: 1184261
