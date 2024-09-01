@@ -1,5 +1,5 @@
-fasttext
+fasttext-wheel
 shap
 lime
-numpy
+numpy==1.23.0
 tornado

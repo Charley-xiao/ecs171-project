@@ -90,7 +90,7 @@ class ShapExplainer(BaseExplainer):
         
         exp = self.explainer([text]).values[0]
         
-        text = text.replace(' ', '')
+        # text = text.replace(' ', '')
         sentences = self.tokenizer.split_rule(text)
 
         result = {}
@@ -102,11 +102,13 @@ class ShapExplainer(BaseExplainer):
             indexed_list = list(enumerate(exp[i]))
             sorted_indexed_list = sorted(indexed_list, key=lambda x: x[1], reverse=True)
             top_3_indexes = [(author_id, round(score * 100, 2)) for author_id, score in sorted_indexed_list[:3] if score > 0.001]
+            # print(top_3_indexes)
 
             try:
                 rank = top3_author_ids.index(int(top_3_indexes[0][0]))
                 color = self.first_three_colors[rank]
-            except ValueError:
+            # except ValueError:
+            except:
                 color = '#212F3D'
 
             result[i] = [(start_pos, end_pos), color, top_3_indexes]
@@ -133,7 +135,7 @@ class LimeExplainer(BaseExplainer):
         exp = self.explainer.explain_instance(text, self.predict_proba, num_features=1000, top_labels=10)
         exp_map = exp.as_map()
         
-        text = text.replace(' ', '')
+        # text = text.replace(' ', '')
         sentences = self.split_rule(text)
         
         newd = {}
@@ -160,7 +162,8 @@ class LimeExplainer(BaseExplainer):
             try:
                 rank = top3_author_ids.index(int(authors_scores[0][0]))
                 color = self.first_three_colors[rank]
-            except ValueError:
+            # except ValueError:
+            except:
                 color = '#212F3D'
             result[key] = [positions, color, authors_scores] # sort by score
 

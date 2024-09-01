@@ -1,14 +1,15 @@
 import fasttext
 import json
 
-def fit(training_set_path, type='basic', validation_set_path=None):
+def fit(training_set_path, type='basic', validation_set_path=None, seed=42):
     if type == 'basic':
         return fasttext.train_supervised(
             input=training_set_path, 
             wordNgrams=2, 
             epoch=20, 
             lr=0.5, 
-            dim=300
+            dim=300,
+            seed=seed
         ) 
     elif type == 'autotune':
         assert validation_set_path is not None, 'Validation set path is required for autotune.'
