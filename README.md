@@ -1,3 +1,12 @@
+## Setup
+
+As you may know, Facebook silently dropped any future support for fastText and it is very important to install the correct version of all the dependencies. To make sure that the project runs correctly, it is strongly recommended to open a new virtual environment and install the dependencies from the `requirements.txt` file.
+
+```bash
+conda create -n <your_env_name> python=3.9
+pip install -r requirements.txt
+```
+
 ## Dataset
 
 ### Full Dataset
