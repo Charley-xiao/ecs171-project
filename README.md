@@ -104,7 +104,7 @@ Then, you can access the user interface by visiting `http://localhost:9263` in y
 > │   └── some_model_file
 > ├── templates
 > │   ├── index.html
-> │   └── result.html
+> │   └── submit.html
 > └── index.py
 
 ## Acknowledgements

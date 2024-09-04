@@ -1,14 +1,15 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Submission</title>
+    <title>Writing Style Analyzer</title>
+    <link rel="icon" href="favicon.png" type="image/x-icon">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,39 +18,109 @@
             height: 100vh;
         }
         #container {
-            text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 90%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        #left {
+            text-align: left;
+            padding-right: 20px;
+            border-right: 2px solid #f0f0f0;
+        }
+        #right {
+            text-align: left;
+            padding-left: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #007acc;
         }
         form {
-            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
         }
-        textarea, button {
-            padding: 10px;
-            margin: 5px 0;
+        textarea {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            color: #333;
+            resize: none;
+            font-size: 16px;
+            line-height: 1.5;
+            height: 150px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        #charCount {
+            text-align: right;
+            font-size: 14px;
+            color: #777;
+        }
+        button {
+            padding: 15px;
+            background: #007acc;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #005f99;
+        }
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
         }
     </style>
     <script>
+        function updateCharCount() {
+            const text = document.getElementById('text').value;
+            document.getElementById('charCount').innerText = text.length + ' characters';
+        }
+
         function submit() {
             const ele = document.getElementById("analyze");
             ele.disabled = true;
             ele.innerText = "Analyzing...";
             document.querySelector("form").submit();
         }
+
+        window.onload = function() {
+            updateCharCount();
+            document.getElementById('text').addEventListener('input', updateCharCount);
+        }
     </script>
 </head>
 <body>
     <div id="container">
-        <h1>So I write like...?</h1>
-        {% if message %}
-            <p style="color: red;">{{ message }}</p>
-        {% end %}
-        <form action="/submit" method="post">
-            <textarea name="data" id="text" cols="30" rows="10" placeholder="Enter your text here..."></textarea>
-            <button type="submit" id="analyze" onclick="submit()">Analyze</button>
-        </form>
+        <div id="left">
+            <h1>So I Write Like...?</h1>
+            {% if message %}
+                <p style="color: red;">{{ message }}</p>
+            {% end %}
+            <p>Enter your text below and click the "Analyze" button to find out which famous writer your writing style resembles the most.</p>
+            <p>For best results, enter at least a few paragraphs of text.</p>
+            <p>Disclaimer: This tool is for entertainment purposes only and may not be 100% accurate.</p>
+            <p>For more information, visit our <a href="https://github.com/Charley-xiao/ecs171-project/tree/main">GitHub repository</a>.</p>
+        </div>
+        <div id="right">
+            <form action="/submit" method="post">
+                <textarea name="data" id="text" placeholder="Enter your text here..."></textarea>
+                <div id="charCount">0 characters</div>
+                <button type="submit" id="analyze" onclick="submit()">Analyze</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

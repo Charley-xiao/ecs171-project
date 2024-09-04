@@ -32,29 +32,32 @@ class SubmitHandler(tornado.web.RequestHandler):
             top3_author_ids = [int(result_model[0]) for result_model in result_model_list][:3]
             print(f"Top 3 authors: {top3_author_ids}")
             result_sentence, result_dict = explainer.explain(data, top3_author_ids)
-            # self.render("templates/index.html", message=result)
-            # result_dict looks like:
-            # {
-            #     0: [
-            #         (0, 6), -> start and end positions
-            #         '#92363b', -> color
-            #         [(2, 0.12)] -> list of top 3 authors and their probabilities
-            #        ]
-            # }
-            # -> <p style="background-color: #92363b">text</p>
             segments = []
             for start_end, color, top_3_indexes in result_dict.values():
                 start, end = start_end
                 text = result_sentence[start:end]
                 segments.append((color, text, (get_name_by_id(top_3_indexes[0][0]), round(top_3_indexes[0][1], 2))))
             self.render("templates/submit.html", segments=segments, show_result=show_result)
+        except tornado.web.MissingArgumentError:
+            self.render("templates/index.html", message="Please enter a text.")
+        except AttributeError:
+            self.render("templates/index.html", message="Please enter at least 2 sentences.")
+        except IndexError:
+            self.render("templates/index.html", message="Your text is too long!")
         except Exception as e:
             self.render("templates/index.html", message=f"An error occurred: {e}")
+
+class FavoriteIconHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.set_header('Content-Type', 'image/png')
+        with open('templates/favicon.png', 'rb') as f:
+            self.write(f.read())
 
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
         (r"/submit", SubmitHandler),
+        (r"/favicon.png", FavoriteIconHandler),
     ])
 
 if __name__ == "__main__":
