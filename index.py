@@ -1,5 +1,10 @@
 import tornado.ioloop
 import tornado.web
+import concurrent.futures
+from tornado.concurrent import run_on_executor
+from tornado.ioloop import IOLoop
+from tornado.web import RequestHandler
+import os 
 import argparse
 import json 
 from model import *
@@ -9,6 +14,11 @@ argparser.add_argument('--port', type=int, default=9263, help='Port to run the s
 argparser.add_argument('--model', type=str, default='model/classifier.model', help='Path to the model. Default: model/classifier.model')
 argparser.add_argument('--label2ind', type=str, default='data/label2ind.json', help='Path to the label2ind file.')
 args = argparser.parse_args()
+
+classifier = load_model(args.model)
+label2ind = json.load(open(args.label2ind, 'r', encoding='ISO-8859-1'))
+
+max_workers = os.cpu_count() * 2
 
 representative_works = {
     'Charles Dickens': ['A Tale of Two Cities', 'Great Expectations', 'Oliver Twist'],
@@ -32,25 +42,35 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("templates/index.html", message=None)
 
-class SubmitHandler(tornado.web.RequestHandler):
-    def post(self):
+class SubmitHandler(RequestHandler):
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+
+    @run_on_executor
+    def compute_prediction(self, data):
+        explainer = ShapExplainer(classifier)
+        data = data.replace('\n', ' ')
+        result_model_list = predict(data, classifier, args.label2ind)
+        result_model_list.sort(key=lambda x: x[2], reverse=True)
+        show_result = [(x[1], round(x[2], 2), representative_works[x[1]]) for x in result_model_list[:3]]
+        top3_author_ids = [int(result_model[0]) for result_model in result_model_list[:3]]
+        result_sentence, result_dict = explainer.explain(data, top3_author_ids)
+        
+        segments = []
+        for start_end, color, top_3_indexes in result_dict.values():
+            start, end = start_end
+            text = result_sentence[start:end]
+            author_name = get_name_by_id(top_3_indexes[0][0])
+            segments.append((color, text, (author_name, round(top_3_indexes[0][1], 2))))
+
+        return segments, show_result
+
+    async def post(self):
         try:
             data = self.get_body_argument("data")
-            explainer = ShapExplainer(classifier)
-            data = data.replace('\n', ' ')
-            print(f"Explaining instance:\n {data}")
-            result_model_list = predict(data, classifier, args.label2ind)
-            result_model_list.sort(key=lambda x: x[2], reverse=True)
-            show_result = [(x[1], round(x[2], 2), representative_works[x[1]]) for x in result_model_list[:3]]
-            top3_author_ids = [int(result_model[0]) for result_model in result_model_list][:3]
-            print(f"Top 3 authors: {top3_author_ids}")
-            result_sentence, result_dict = explainer.explain(data, top3_author_ids)
-            segments = []
-            for start_end, color, top_3_indexes in result_dict.values():
-                start, end = start_end
-                text = result_sentence[start:end]
-                author_name = get_name_by_id(top_3_indexes[0][0])
-                segments.append((color, text, (author_name, round(top_3_indexes[0][1], 2))))
+            # print(f"Explaining instance:\n {data}")
+
+            segments, show_result = await self.compute_prediction(data)
+
             self.render("templates/submit.html", segments=segments, show_result=show_result)
         except tornado.web.MissingArgumentError:
             self.render("templates/index.html", message="Please enter a text.")
@@ -72,12 +92,10 @@ def make_app():
         (r"/", MainHandler),
         (r"/submit", SubmitHandler),
         (r"/favicon.png", FavoriteIconHandler),
-    ])
+    ], compress_response=True)
 
 if __name__ == "__main__":
     app = make_app()
     app.listen(args.port)
     print(f"Server running on http://localhost:{args.port}/ with model {args.model}")
-    classifier = load_model(args.model)
-    label2ind = json.load(open(args.label2ind, 'r', encoding='ISO-8859-1'))
     tornado.ioloop.IOLoop.current().start()
