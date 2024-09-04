@@ -10,6 +10,19 @@ argparser.add_argument('--model', type=str, default='model/classifier.model', he
 argparser.add_argument('--label2ind', type=str, default='data/label2ind.json', help='Path to the label2ind file.')
 args = argparser.parse_args()
 
+representative_works = {
+    'Charles Dickens': ['A Tale of Two Cities', 'Great Expectations', 'Oliver Twist'],
+    'Agatha Christie': ['The Mysterious Affair at Styles'],
+    'Jane Austen': ['Pride and Prejudice', 'Sense and Sensibility', 'Emma'],
+    'Mark Twain': ['The Adventures of Tom Sawyer', 'Adventures of Huckleberry Finn'],
+    'O Henry': ['The Gift of the Magi', 'The Ransom of Red Chief'],
+    'Oscar Wilde': ['The Picture of Dorian Gray', 'The Importance of Being Earnest'],
+    'P G Wodehouse': ['Right Ho, Jeeves', 'The Inimitable Jeeves'],
+    'Walt Whitman': ['Leaves of Grass'],
+    'Winston Churchill': ['The Crisis', 'The Crossing'],
+    'Zane Grey': ['Riders of the Purple Sage', 'The Last Trail']
+}
+
 def get_name_by_id(author_id):
     for name, id in label2ind.items():
         if int(id.split('__')[-1]) == author_id:
@@ -28,7 +41,7 @@ class SubmitHandler(tornado.web.RequestHandler):
             print(f"Explaining instance:\n {data}")
             result_model_list = predict(data, classifier, args.label2ind)
             result_model_list.sort(key=lambda x: x[2], reverse=True)
-            show_result = [(x[1], round(x[2], 2)) for x in result_model_list][:3]
+            show_result = [(x[1], round(x[2], 2), representative_works[x[1]]) for x in result_model_list[:3]]
             top3_author_ids = [int(result_model[0]) for result_model in result_model_list][:3]
             print(f"Top 3 authors: {top3_author_ids}")
             result_sentence, result_dict = explainer.explain(data, top3_author_ids)
@@ -36,7 +49,8 @@ class SubmitHandler(tornado.web.RequestHandler):
             for start_end, color, top_3_indexes in result_dict.values():
                 start, end = start_end
                 text = result_sentence[start:end]
-                segments.append((color, text, (get_name_by_id(top_3_indexes[0][0]), round(top_3_indexes[0][1], 2))))
+                author_name = get_name_by_id(top_3_indexes[0][0])
+                segments.append((color, text, (author_name, round(top_3_indexes[0][1], 2))))
             self.render("templates/submit.html", segments=segments, show_result=show_result)
         except tornado.web.MissingArgumentError:
             self.render("templates/index.html", message="Please enter a text.")

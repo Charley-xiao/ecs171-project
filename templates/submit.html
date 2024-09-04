@@ -74,7 +74,7 @@
             padding: 10px;
             position: absolute;
             z-index: 1;
-            bottom: 150%; /* Position the tooltip above the text */
+            bottom: 110%; /* Position the tooltip above the text */
             left: 50%;
             margin-left: -90px;
             opacity: 0;
@@ -100,6 +100,12 @@
         button:hover {
             background: #005f80;
         }
+        .works {
+            font-size: 16px;
+            margin: 5px 0;
+            color: #777;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -109,6 +115,10 @@
             {% for res in show_result %}
                 <h1>{{ res[0] }}</h1>
                 <p>{{ res[1] }}%</p>
+                <p>Representative works:</p>
+                {% for works in res[2] %}
+                    <p class="works">{{ works }}</p>
+                {% end %}
             {% end %}
         </div>
         <div id="right">
