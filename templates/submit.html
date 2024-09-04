@@ -63,7 +63,7 @@
             <p>{{ res[1] }}%</p>
         {% end %}
         {% for segment in segments %}
-            <span class="tooltip" style="background-color: {{ segment[0] }}; color: white;">
+            <span class="tooltip" style="color: {{ segment[0] }};">
                 {{ segment[1] }}
                 <span class="tooltiptext">{{ segment[2][0] }}: {{ segment[2][1] }}%</span>
             </span>
