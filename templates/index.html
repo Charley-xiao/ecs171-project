@@ -44,7 +44,7 @@
     <div id="container">
         <h1>So I write like...?</h1>
         {% if message %}
-            <p>{{ message }}</p>
+            <p style="color: red;">{{ message }}</p>
         {% end %}
         <form action="/submit" method="post">
             <textarea name="data" id="text" cols="30" rows="10" placeholder="Enter your text here..."></textarea>

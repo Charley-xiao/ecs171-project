@@ -80,7 +80,7 @@ if __name__ == '__main__':
         classifier = fit(args.train)
     else:
         classifier = load_model(args.existing_model)
-    efficiency(classifier, n=10)
+    efficiency(classifier, n=1000)
         
 
 
