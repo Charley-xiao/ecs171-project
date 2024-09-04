@@ -1,3 +1,5 @@
+# Explainable Writing Style Detection with User Interface
+
 ## Setup
 
 As you may know, Facebook silently dropped any future support for fastText and it is very important to install the correct version of all the dependencies. To make sure that the project runs correctly, it is strongly recommended to open a new virtual environment and install the dependencies from the `requirements.txt` file.
@@ -46,7 +48,7 @@ If you wish to generate the dataset from scratch, here are the steps:
 3. In the `data` folder, run the following command to generate the dataset:
 
 ```bash
-python preprocess.py --num_authors <number of authors you want>
+python preprocess.py --num_authors <number_of_authors_you_want>
 ```
 
 This will generate the dataset with the specified number of authors **randomly**. The generated dataset will be saved in the `data` folder.
@@ -60,7 +62,7 @@ python preprocess.py --enable_author_selection
 If you wish to split the dataset into training and testing sets, you can run the following command
 
 ```bash
-python splitdataset.py --train_split <train split ratio>
+python splitdataset.py --train_split <train_split_ratio>
 ```
 
 after you properly modify the variable `ORIGINAL_DATASET_PATH` in the `splitdataset.py` file.
@@ -72,18 +74,38 @@ after you properly modify the variable `ORIGINAL_DATASET_PATH` in the `splitdata
 To train the model, you can run the following command under the `model` folder:
 
 ```bash
-python train.py --train <path to the training data> --type <basic or autotune> --test <path to the testing data> --val <path to the validation data> --model <path to save the model> --label2ind <path to the label2ind file>
+python train.py --train <path_to_the_training_data> --type <basic_or_autotune> --test <path_to_the_testing_data> --val <path_to_the_validation_data> --model <path_to_save_the_model> --label2ind <path_to_the_label2ind_file>
 ```
+
+### Use Pretrained Model
+
+We have provided a pretrained model at [this link](https://drive.google.com/file/d/1Vq7f2tPF6SBCA3jbioRHjsVBDSh2Nadk/view?usp=sharing). You can download the model and put it under the `model` folder.
 
 ## User Interface
 
 The user interface is implemented using Tornado, a Python web framework. To run the user interface, you can run the following command under the root directory:
 
 ```bash
-python index.py
+python index.py --model <path_to_the_model> --label2ind <path_to_the_label2ind_file>
 ```
 
 Then, you can access the user interface by visiting `http://localhost:9263` in your web browser.
+
+> [!IMPORTANT]  
+> To run the server successfully, your folder structure should at least look like this:
+> ```
+> .
+> ├── data
+> │   └── label2ind.json
+> ├── model
+> │   ├── __init__.py
+> │   ├── expl.py
+> │   ├── train.py
+> │   └── some_model_file
+> ├── templates
+> │   ├── index.html
+> │   └── result.html
+> └── index.py
 
 ## Acknowledgements
 
