@@ -82,6 +82,33 @@
             background: #cccccc;
             cursor: not-allowed;
         }
+        @media (max-width: 768px) {
+            #container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            #left {
+                padding-right: 0;
+                border-right: none;
+                padding-bottom: 20px;
+            }
+            #right {
+                padding-left: 0;
+            }
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 20px;
+            }
+            textarea {
+                font-size: 14px;
+                height: 120px;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
     </style>
     <script>
         function updateCharCount() {

@@ -6,20 +6,19 @@
     <title>Analysis Result</title>
     <link rel="icon" href="favicon.png" type="image/x-icon">
     <style>
-        html {
+        html, body {
             overflow: auto;
-        }
-        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f5f5;
             color: #333;
             margin: 0;
             padding: 0;
+        }
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100%;
-            overflow: auto;
         }
         #container {
             background: #ffffff;
@@ -74,7 +73,7 @@
             padding: 10px;
             position: absolute;
             z-index: 1;
-            bottom: 110%; /* Position the tooltip above the text */
+            bottom: 110%;
             left: 50%;
             margin-left: -90px;
             opacity: 0;
@@ -105,6 +104,42 @@
             margin: 5px 0;
             color: #777;
             font-style: italic;
+        }
+        @media (max-width: 768px) {
+            #container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            #left {
+                padding-right: 0;
+                border-right: none;
+                padding-bottom: 20px;
+            }
+            #right {
+                padding-left: 0;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            p {
+                font-size: 16px;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 18px;
+            }
+            p {
+                font-size: 14px;
+            }
+            button {
+                font-size: 12px;
+                padding: 8px;
+            }
         }
     </style>
 </head>
